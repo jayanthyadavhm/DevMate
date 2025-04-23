@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter var', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+
+  /* Improve button and link tap targets on mobile */
+  @media (max-width: 640px) {
+    button, a {
+      @apply min-h-[44px] min-w-[44px];
+    }
+  }
+
+  /* Form elements base styles */
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='url'],
+  select,
+  textarea {
+    @apply block w-full rounded-lg border-gray-300 shadow-sm text-gray-900
+           focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+           disabled:bg-gray-100 disabled:cursor-not-allowed
+           placeholder:text-gray-400;
+  }
+
+  /* Checkbox and radio styles */
+  input[type='checkbox'],
+  input[type='radio'] {
+    @apply h-4 w-4 rounded border-gray-300 text-primary-600
+           focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  input[type='radio'] {
+    @apply rounded-full;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium 
+           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed 
+           focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 shadow-sm;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-primary-500;
+  }
+
+  /* Button sizes */
+  .btn-xs {
+    @apply text-xs px-2.5 py-1.5 rounded-md;
+  }
+
+  .btn-sm {
+    @apply text-sm px-3 py-2 rounded-md;
+  }
+
+  .btn-lg {
+    @apply text-lg px-6 py-3 rounded-lg;
+  }
+
+  /* Card variations */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden 
+           transition-shadow duration-200 hover:shadow-md;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 bg-gray-50;
+  }
+
+  .card-content {
+    @apply px-6 py-4;
+  }
+
+  .card-footer {
+    @apply px-6 py-4 bg-gray-50 border-t border-gray-200;
+  }
+
+  /* Form elements */
+  .form-group {
+    @apply space-y-1;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .form-hint {
+    @apply mt-1 text-sm text-gray-500;
+  }
+
+  .form-error {
+    @apply mt-1 text-sm text-red-600;
+  }
+
+  /* Navigation */
+  .nav-link {
+    @apply px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150;
+  }
+
+  .nav-link-active {
+    @apply text-primary-600 bg-primary-50;
+  }
+
+  .nav-link-inactive {
+    @apply text-gray-700 hover:text-primary-600 hover:bg-gray-50;
+  }
+
+  /* Dropdown menus */
+  .dropdown-menu {
+    @apply absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white py-1 
+           shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none
+           divide-y divide-gray-100;
+  }
+
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
