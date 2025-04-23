@@ -10,7 +10,6 @@ const PrivateRoute = ({ children, requiredRole }) =>
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  
   if (requiredRole && currentUser?.role !== requiredRole) {
     return <Navigate to="/dashboard" replace />;
   }
