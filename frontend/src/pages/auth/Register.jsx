@@ -4,11 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '', // Changed from 'name' to 'username' to match backend
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'participant', // Default role
+    role: 'user', // Default role to match backend enum
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,7 @@ const Register = () => {
   };
 
   const validateForm = () => {
-    if (!formData.name.trim()) return 'Name is required';
+    if (!formData.username.trim()) return 'Username is required';
     if (!formData.email.trim()) return 'Email is required';
     if (!formData.password) return 'Password is required';
     if (formData.password.length < 6) return 'Password must be at least 6 characters';
@@ -45,7 +45,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await register(formData.name, formData.email, formData.password, formData.role);
+      await register(formData.username, formData.email, formData.password, formData.role);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Failed to create an account');
@@ -79,18 +79,18 @@ const Register = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Full Name
+              <label htmlFor="username" className="sr-only">
+                Username
               </label>
               <input
-                id="name"
-                name="name"
+                id="username"
+                name="username"
                 type="text"
-                autoComplete="name"
+                autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
-                value={formData.name}
+                placeholder="Username"
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>
@@ -149,29 +149,29 @@ const Register = () => {
             <div className="flex space-x-4">
               <div className="flex items-center">
                 <input
-                  id="role-participant"
+                  id="role-user"
                   name="role"
                   type="radio"
-                  value="participant"
-                  checked={formData.role === 'participant'}
+                  value="user"
+                  checked={formData.role === 'user'}
                   onChange={handleChange}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                 />
-                <label htmlFor="role-participant" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="role-user" className="ml-2 block text-sm text-gray-900">
                   Participant (Student)
                 </label>
               </div>
               <div className="flex items-center">
                 <input
-                  id="role-organizer"
+                  id="role-admin"
                   name="role"
                   type="radio"
-                  value="organizer"
-                  checked={formData.role === 'organizer'}
+                  value="admin"
+                  checked={formData.role === 'admin'}
                   onChange={handleChange}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                 />
-                <label htmlFor="role-organizer" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="role-admin" className="ml-2 block text-sm text-gray-900">
                   Organizer (Host)
                 </label>
               </div>

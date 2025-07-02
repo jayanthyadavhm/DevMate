@@ -84,7 +84,10 @@ const Navbar = () => {
           <div className="hidden md:flex md:items-center md:space-x-4">
             <NavLink to="/hackathons">Hackathons</NavLink>
             <NavLink to="/find-teammates">Find Teammates</NavLink>
-            {isAuthenticated && currentUser?.role === 'organizer' && (
+            {isAuthenticated && (
+              <NavLink to="/projects">Projects</NavLink>
+            )}
+            {isAuthenticated && currentUser?.role === 'admin' && (
               <NavLink to="/hackathons/create">Host Hackathon</NavLink>
             )}
           </div>

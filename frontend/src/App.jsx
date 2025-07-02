@@ -17,6 +17,8 @@ import TeamDetails from './pages/teams/TeamDetails';
 import UserProfile from './pages/profile/UserProfile';
 import EditProfile from './pages/profile/EditProfile';
 import Dashboard from './pages/Dashboard';
+import Projects from './pages/Projects';
+import CreateProject from './pages/projects/CreateProject';
 import NotFound from './pages/NotFound';
 
 // Auth Components
@@ -70,6 +72,16 @@ function App() {
               <Route path="/dashboard" element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/projects" element={
+                <PrivateRoute>
+                  <Projects />
+                </PrivateRoute>
+              } />
+              <Route path="/projects/create" element={
+                <PrivateRoute>
+                  <CreateProject />
                 </PrivateRoute>
               } />
               <Route path="/find-teammates" element={
