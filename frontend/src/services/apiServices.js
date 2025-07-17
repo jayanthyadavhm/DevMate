@@ -1,4 +1,146 @@
+// Hackathon Teams API services
+export const hackathonTeamsAPI = {
+  // Mark user as ready for a hackathon
+  markReady: async (hackathonId) => {
+    try {
+      const response = await api.post('/hackathon-teams/ready', { hackathonId });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to mark ready');
+    }
+  },
+  // List users ready for a hackathon
+  getReadyUsers: async (hackathonId) => {
+    try {
+      const response = await api.get(`/hackathon-teams/ready/${hackathonId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch ready users');
+    }
+  },
+  // Send join request
+  sendJoinRequest: async (toUserId, hackathonId) => {
+    try {
+      const response = await api.post('/hackathon-teams/join-request', { toUserId, hackathonId });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to send join request');
+    }
+  },
+  // List join requests for current user
+  getJoinRequests: async () => {
+    try {
+      const response = await api.get('/hackathon-teams/join-requests');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch join requests');
+    }
+  },
+
+  // Get all ready users (for finding teammates)
+  getReadyUsers: async () => {
+    try {
+      const response = await api.get('/hackathon-teams/ready-users');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch ready users');
+    }
+  },
+
+  // Accept a join request
+  acceptRequest: async (requestId) => {
+    try {
+      const response = await api.post(`/hackathon-teams/accept-request/${requestId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to accept request');
+    }
+  },
+
+  // Reject a join request
+  rejectRequest: async (requestId) => {
+    try {
+      const response = await api.post(`/hackathon-teams/reject-request/${requestId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to reject request');
+    }
+  },
+
+  // Update user profile
+  updateProfile: async (profileData) => {
+    try {
+      const response = await api.patch('/hackathon-teams/profile', profileData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to update profile');
+    }
+  },
+
+  // Get user profile
+  getUserProfile: async (userId) => {
+    try {
+      const response = await api.get(`/hackathon-teams/profile/${userId || ''}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch profile');
+    }
+  },
+};
+// Hackathons API services
+export const hackathonsAPI = {
+  // Get all hackathons
+  getHackathons: async () => {
+    try {
+      const response = await api.get('/hackathons');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch hackathons');
+    }
+  },
+
+  // Get hackathon by ID
+  getHackathonById: async (id) => {
+    try {
+      const response = await api.get(`/hackathons/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch hackathon');
+    }
+  },
+
+  // Create new hackathon
+  createHackathon: async (hackathonData) => {
+    try {
+      const response = await api.post('/hackathons', hackathonData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to create hackathon');
+    }
+  },
+
+  // Update hackathon
+  updateHackathon: async (id, hackathonData) => {
+    try {
+      const response = await api.patch(`/hackathons/${id}`, hackathonData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to update hackathon');
+    }
+  },
+
+  // Delete hackathon
+  deleteHackathon: async (id) => {
+    try {
+      const response = await api.delete(`/hackathons/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to delete hackathon');
+    }
+  },
+};
 import api from './api';
+
 
 // Authentication API services
 export const authAPI = {
@@ -12,10 +154,10 @@ export const authAPI = {
     }
   },
 
-  // Register user
-  register: async (username, email, password) => {
+  // Register user (with role)
+  register: async (username, email, password, role = 'user') => {
     try {
-      const response = await api.post('/auth/register', { username, email, password });
+      const response = await api.post('/auth/register', { username, email, password, role });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Registration failed');

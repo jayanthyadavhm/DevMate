@@ -60,16 +60,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, email, password, role = 'user') => {
     setLoading(true);
     setError('');
-    
     try {
-      const data = await authAPI.register(username, email, password);
+      const data = await authAPI.register(username, email, password, role);
       const { user, token } = data;
-      
-      // Store token and user data
       localStorage.setItem('devmate_token', token);
       localStorage.setItem('devmate_user', JSON.stringify(user));
       setCurrentUser(user);
-      
       return user;
     } catch (err) {
       setError(err.message || 'Failed to register');
@@ -102,7 +98,9 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     isAuthenticated: !!currentUser,
     isParticipant: currentUser?.role === 'user',
-    isOrganizer: currentUser?.role === 'admin'
+    isOrganizer: currentUser?.role === 'organizer',
+    role: currentUser?.role,
+    id: currentUser?.id || currentUser?._id
   };
 
   return (

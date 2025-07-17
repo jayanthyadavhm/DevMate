@@ -1,8 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from'../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
-const PrivateRoute = ({ children, requiredRole }) => 
-{
+const PrivateRoute = ({ children, requiredRole }) => {
   const { isAuthenticated, currentUser } = useAuth();
   const location = useLocation();
 
@@ -11,10 +10,15 @@ const PrivateRoute = ({ children, requiredRole }) =>
   }
 
   if (requiredRole && currentUser?.role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />;
+    // Redirect to appropriate dashboard based on user role
+    if (currentUser?.role === 'organizer') {
+      return <Navigate to="/organiser" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return children;
-}
+};
 
 export default PrivateRoute;

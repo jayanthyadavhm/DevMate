@@ -119,10 +119,10 @@ const Home = () => {
                 <div className="mt-10 flex space-x-4">
                   {isAuthenticated ? (
                     <Link
-                      to="/hackathons"
+                      to="/dashboard"
                       className="btn btn-secondary inline-flex items-center"
                     >
-                      Browse Hackathons
+                      Go to Dashboard
                       <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
                     </Link>
                   ) : (
@@ -135,10 +135,10 @@ const Home = () => {
                         <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
                       </Link>
                       <Link
-                        to="/hackathons"
+                        to="/login"
                         className="btn btn-outline bg-transparent text-white border-white hover:bg-white hover:text-primary-600"
                       >
-                        Browse Hackathons
+                        Sign In
                       </Link>
                     </>
                   )}
@@ -244,10 +244,10 @@ const Home = () => {
             </div>
             <div className="ml-3 inline-flex rounded-md shadow">
               <Link
-                to="/hackathons"
+                to="/login"
                 className="btn bg-primary-600 text-white hover:bg-primary-500 border border-transparent"
               >
-                Browse Hackathons
+                Sign In
               </Link>
             </div>
           </div>

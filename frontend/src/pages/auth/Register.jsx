@@ -45,8 +45,13 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await register(formData.username, formData.email, formData.password, formData.role);
-      navigate('/dashboard');
+      const user = await register(formData.username, formData.email, formData.password, formData.role);
+      // Redirect based on user role
+      if (user.role === 'organizer') {
+        navigate('/organiser');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.message || 'Failed to create an account');
       console.error(err);
@@ -78,6 +83,19 @@ const Register = () => {
         )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label className="block mb-1 font-medium">Register as</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2 mb-4"
+                required
+              >
+                <option value="user">Student</option>
+                <option value="organizer">Organiser</option>
+              </select>
+            </div>
             <div>
               <label htmlFor="username" className="sr-only">
                 Username
@@ -141,40 +159,6 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">I am a:</p>
-            <div className="flex space-x-4">
-              <div className="flex items-center">
-                <input
-                  id="role-user"
-                  name="role"
-                  type="radio"
-                  value="user"
-                  checked={formData.role === 'user'}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                />
-                <label htmlFor="role-user" className="ml-2 block text-sm text-gray-900">
-                  Participant (Student)
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="role-admin"
-                  name="role"
-                  type="radio"
-                  value="admin"
-                  checked={formData.role === 'admin'}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                />
-                <label htmlFor="role-admin" className="ml-2 block text-sm text-gray-900">
-                  Organizer (Host)
-                </label>
-              </div>
             </div>
           </div>
 

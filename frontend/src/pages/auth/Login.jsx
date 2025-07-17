@@ -11,8 +11,11 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the redirect path from location state or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get the redirect path from location state or default based on role
+  const getDefaultRedirect = (userRole) => {
+    if (userRole === 'organizer') return '/organiser';
+    return '/dashboard';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +23,9 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
+      const user = await login(email, password);
+      const redirectPath = location.state?.from?.pathname || getDefaultRedirect(user.role);
+      navigate(redirectPath, { replace: true });
     } catch (err) {
       setError('Failed to sign in. Please check your credentials.');
       console.error(err);
