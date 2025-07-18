@@ -16,7 +16,10 @@ import FindTeammates from './pages/teams/FindTeammates';
 import TeamDetails from './pages/teams/TeamDetails';
 import UserProfile from './pages/profile/UserProfile';
 import EditProfile from './pages/profile/EditProfile';
-import Dashboard from './pages/Dashboard';
+import OrganiserDashboard from './pages/organiser/OrganiserDashboard';
+import StudentDashboard from './pages/dashboard/StudentDashboard';
+import Projects from './pages/Projects';
+import CreateProject from './pages/projects/CreateProject';
 import NotFound from './pages/NotFound';
 
 // Auth Components
@@ -56,7 +59,11 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/hackathons" element={<HackathonList />} />
+              <Route path="/hackathons" element={
+                <PrivateRoute requiredRole="user">
+                  <HackathonList />
+                </PrivateRoute>
+              } />
               
               {/* Specific routes before dynamic routes */}
               <Route path="/hackathons/create" element={
@@ -64,21 +71,42 @@ function App() {
                   <CreateHackathon />
                 </PrivateRoute>
               } />
-              <Route path="/hackathons/:id" element={<HackathonDetails />} />
+              <Route path="/hackathons/:id" element={
+                <PrivateRoute>
+                  <HackathonDetails />
+                </PrivateRoute>
+              } />
               
               {/* Protected routes */}
+              {/* Organiser dashboard route */}
+              <Route path="/organiser" element={
+                <PrivateRoute requiredRole="organizer">
+                  <OrganiserDashboard />
+                </PrivateRoute>
+              } />
+              {/* Student dashboard route */}
               <Route path="/dashboard" element={
-                <PrivateRoute>
-                  <Dashboard />
+                <PrivateRoute requiredRole="user">
+                  <StudentDashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/projects" element={
+                <PrivateRoute requiredRole="user">
+                  <Projects />
+                </PrivateRoute>
+              } />
+              <Route path="/projects/create" element={
+                <PrivateRoute requiredRole="user">
+                  <CreateProject />
                 </PrivateRoute>
               } />
               <Route path="/find-teammates" element={
-                <PrivateRoute>
+                <PrivateRoute requiredRole="user">
                   <FindTeammates />
                 </PrivateRoute>
               } />
               <Route path="/teams/:id" element={
-                <PrivateRoute>
+                <PrivateRoute requiredRole="user">
                   <TeamDetails />
                 </PrivateRoute>
               } />

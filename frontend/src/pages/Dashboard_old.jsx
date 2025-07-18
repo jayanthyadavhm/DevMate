@@ -114,18 +114,6 @@ const Dashboard = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Error Loading Dashboard</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="py-10">
@@ -136,20 +124,22 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-gray-900">
-                    Welcome back, {currentUser?.username}!
+                    Welcome back, {currentUser?.name}!
                   </h1>
                   <p className="mt-1 text-sm text-gray-500">
-                    {isParticipant ? 'Here are your projects and tasks' : 'Manage your projects and team members'}
+                    {isParticipant ? 'Here are your hackathons and teams' : 'Manage your hackathons and participants'}
                   </p>
                 </div>
                 <div className="flex space-x-3">
-                  <Button
-                    to="/projects/create"
-                    variant="primary"
-                    icon={PlusIcon}
-                  >
-                    Create Project
-                  </Button>
+                  {isOrganizer && (
+                    <Button
+                      to="/hackathons/create"
+                      variant="primary"
+                      icon={PlusIcon}
+                    >
+                      Create Hackathon
+                    </Button>
+                  )}
                   <Button
                     to="/find-teammates"
                     variant="outline"
@@ -163,77 +153,54 @@ const Dashboard = () => {
           </Card>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Projects Section */}
+            {/* Hackathons Section */}
             <Card>
               <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Your Projects</h2>
+                <h2 className="text-lg font-medium text-gray-900">Your Hackathons</h2>
               </CardHeader>
-              <CardContent>
-                {projects.length === 0 ? (
-                  <div className="text-center py-12">
-                    <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No projects yet</h3>
-                    <p className="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
-                    <div className="mt-6">
-                      <Button
-                        to="/projects/create"
-                        variant="primary"
-                        icon={PlusIcon}
-                      >
-                        Create Project
-                      </Button>
-                    </div>
-                  </div>
+              <div className="divide-y divide-gray-200">
+                {hackathons.length > 0 ? (
+                  hackathons.map((hackathon) => (
+                    <HackathonCard key={hackathon.id} hackathon={hackathon} />
+                  ))
                 ) : (
-                  <div className="divide-y divide-gray-200">
-                    {projects.slice(0, 3).map((project) => (
-                      <ProjectCard key={project._id} project={project} />
-                    ))}
-                    {projects.length > 3 && (
-                      <div className="px-5 py-3">
-                        <Link
-                          to="/projects"
-                          className="text-sm font-medium text-primary-600 hover:text-primary-500"
-                        >
-                          View all {projects.length} projects →
-                        </Link>
-                      </div>
-                    )}
+                  <div className="px-5 py-8 text-center">
+                    <p className="text-sm text-gray-500">No hackathons found</p>
+                    <Button
+                      to="/hackathons"
+                      variant="primary"
+                      className="mt-4"
+                    >
+                      Browse Hackathons
+                    </Button>
                   </div>
                 )}
-              </CardContent>
+              </div>
             </Card>
 
-            {/* Tasks Section */}
+            {/* Teams Section */}
             <Card>
               <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Your Tasks</h2>
+                <h2 className="text-lg font-medium text-gray-900">Your Teams</h2>
               </CardHeader>
-              <CardContent>
-                {tasks.length === 0 ? (
-                  <div className="text-center py-12">
-                    <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No tasks assigned</h3>
-                    <p className="mt-1 text-sm text-gray-500">Tasks will appear here when they are assigned to you.</p>
-                  </div>
+              <div className="divide-y divide-gray-200">
+                {teams.length > 0 ? (
+                  teams.map((team) => (
+                    <TeamCard key={team.id} team={team} />
+                  ))
                 ) : (
-                  <div className="divide-y divide-gray-200">
-                    {tasks.slice(0, 3).map((task) => (
-                      <TaskCard key={task._id} task={task} />
-                    ))}
-                    {tasks.length > 3 && (
-                      <div className="px-5 py-3">
-                        <Link
-                          to="/tasks"
-                          className="text-sm font-medium text-primary-600 hover:text-primary-500"
-                        >
-                          View all {tasks.length} tasks →
-                        </Link>
-                      </div>
-                    )}
+                  <div className="px-5 py-8 text-center">
+                    <p className="text-sm text-gray-500">No teams found</p>
+                    <Button
+                      to="/find-teammates"
+                      variant="primary"
+                      className="mt-4"
+                    >
+                      Find Teammates
+                    </Button>
                   </div>
                 )}
-              </CardContent>
+              </div>
             </Card>
           </div>
         </div>

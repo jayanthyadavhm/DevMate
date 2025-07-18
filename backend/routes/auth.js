@@ -7,12 +7,16 @@ const auth = require('../middleware/auth');
 // Register
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const user = new User({ username, email, password });
+        const { username, email, password, role } = req.body;
+        const user = new User({ username, email, password, role: role === 'organizer' ? 'organizer' : 'user' });
         await user.save();
         
+        // Create user object with id field for frontend
+        const userObj = user.toObject();
+        userObj.id = user._id;
+        
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.status(201).json({ user, token });
+        res.status(201).json({ user: userObj, token });
     } catch (error) {
         res.status(400).json({ message: 'Registration failed', error: error.message });
     }
@@ -23,13 +27,14 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
+        // Always return role and id
+        const userObj = user.toObject();
+        userObj.id = user._id;
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-        res.json({ user, token });
+        res.json({ user: userObj, token });
     } catch (error) {
         res.status(400).json({ message: 'Login failed', error: error.message });
     }

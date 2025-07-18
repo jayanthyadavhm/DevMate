@@ -72,21 +72,24 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center space-x-2">
             <Link to="/" className="flex items-center space-x-2">
               <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                 DevMate
               </span>
             </Link>
+            {isAuthenticated && currentUser?.role && (
+              <span className="ml-2 text-xs text-gray-500 font-semibold uppercase tracking-widest">{currentUser.role}</span>
+            )}
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-4">
-            <NavLink to="/hackathons">Hackathons</NavLink>
-            <NavLink to="/find-teammates">Find Teammates</NavLink>
-            {isAuthenticated && currentUser?.role === 'organizer' && (
-              <NavLink to="/hackathons/create">Host Hackathon</NavLink>
-            )}
+            {isAuthenticated && currentUser?.role === 'user' && <NavLink to="/dashboard">Dashboard</NavLink>}
+            {isAuthenticated && currentUser?.role === 'user' && <NavLink to="/hackathons">Hackathons</NavLink>}
+            {isAuthenticated && currentUser?.role === 'user' && <NavLink to="/find-teammates">Find Teammates</NavLink>}
+            {isAuthenticated && currentUser?.role === 'user' && <NavLink to="/projects">Projects</NavLink>}
+            {isAuthenticated && currentUser?.role === 'organizer' && <NavLink to="/organiser">Organiser Dashboard</NavLink>}
           </div>
 
           {/* User Menu (Desktop) */}
@@ -100,8 +103,13 @@ const Navbar = () => {
                 </button>
 
                 {/* User Menu */}
-                <div className="relative group">
-                  <button className="flex items-center space-x-1 p-1.5 rounded-full hover:bg-gray-100">
+                <div className="relative" tabIndex={0} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setIsMenuOpen(false); }}>
+                  <button
+                    className="flex items-center space-x-1 p-1.5 rounded-full hover:bg-gray-100"
+                    onClick={() => setIsMenuOpen((open) => !open)}
+                    aria-haspopup="true"
+                    aria-expanded={isMenuOpen}
+                  >
                     {currentUser.avatar ? (
                       <img
                         className="h-8 w-8 rounded-full object-cover"
@@ -112,42 +120,52 @@ const Navbar = () => {
                       <UserCircleIcon className="h-8 w-8 text-gray-700" />
                     )}
                   </button>
-
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none invisible group-hover:visible">
-                    <div className="px-4 py-2">
-                      <p className="text-sm text-gray-500">Signed in as</p>
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {currentUser.email}
-                      </p>
+                  {isMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <div className="px-4 py-2">
+                        <p className="text-sm text-gray-500">Signed in as</p>
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {currentUser.email}
+                        </p>
+                      </div>
+                      <div className="border-t border-gray-100" />
+                      {currentUser?.role === 'organizer' ? (
+                        <Link
+                          to="/organiser"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Organiser Panel
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/dashboard"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Dashboard
+                        </Link>
+                      )}
+                      <Link
+                        to={`/profile/${currentUser.id}`}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        Your Profile
+                      </Link>
+                      <Link
+                        to="/profile/edit"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        Settings
+                      </Link>
+                      <div className="border-t border-gray-100" />
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Sign out
+                      </button>
                     </div>
-                    <div className="border-t border-gray-100" />
-                    <Link
-                      to="/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      to={`/profile/${currentUser.id}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Your Profile
-                    </Link>
-                    <Link
-                      to="/profile/edit"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Settings
-                    </Link>
-                    <div className="border-t border-gray-100" />
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                    >
-                      Sign out
-                    </button>
-                  </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -190,10 +208,15 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
-            <NavLink to="/hackathons">Hackathons</NavLink>
-            <NavLink to="/find-teammates">Find Teammates</NavLink>
+            {isAuthenticated && currentUser?.role === 'user' && (
+              <>
+                <NavLink to="/hackathons">Hackathons</NavLink>
+                <NavLink to="/find-teammates">Find Teammates</NavLink>
+                <NavLink to="/projects">Projects</NavLink>
+              </>
+            )}
             {isAuthenticated && currentUser?.role === 'organizer' && (
-              <NavLink to="/hackathons/create">Host Hackathon</NavLink>
+              <NavLink to="/organiser">Organiser Panel</NavLink>
             )}
           </div>
 
@@ -225,12 +248,21 @@ const Navbar = () => {
                 </button>
               </div>
               <div className="mt-3 px-2 space-y-1">
-                <Link
-                  to="/dashboard"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
-                >
-                  Dashboard
-                </Link>
+                {currentUser?.role === 'organizer' ? (
+                  <Link
+                    to="/organiser"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    Organiser Panel
+                  </Link>
+                ) : (
+                  <Link
+                    to="/dashboard"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <Link
                   to={`/profile/${currentUser.id}`}
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"

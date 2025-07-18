@@ -4,11 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '', // Changed from 'name' to 'username' to match backend
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'participant', // Default role
+    role: 'user', // Default role to match backend enum
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,7 @@ const Register = () => {
   };
 
   const validateForm = () => {
-    if (!formData.name.trim()) return 'Name is required';
+    if (!formData.username.trim()) return 'Username is required';
     if (!formData.email.trim()) return 'Email is required';
     if (!formData.password) return 'Password is required';
     if (formData.password.length < 6) return 'Password must be at least 6 characters';
@@ -45,8 +45,13 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await register(formData.name, formData.email, formData.password, formData.role);
-      navigate('/dashboard');
+      const user = await register(formData.username, formData.email, formData.password, formData.role);
+      // Redirect based on user role
+      if (user.role === 'organizer') {
+        navigate('/organiser');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.message || 'Failed to create an account');
       console.error(err);
@@ -79,18 +84,31 @@ const Register = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Full Name
+              <label className="block mb-1 font-medium">Register as</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2 mb-4"
+                required
+              >
+                <option value="user">Student</option>
+                <option value="organizer">Organiser</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="username" className="sr-only">
+                Username
               </label>
               <input
-                id="name"
-                name="name"
+                id="username"
+                name="username"
                 type="text"
-                autoComplete="name"
+                autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
-                value={formData.name}
+                placeholder="Username"
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>
@@ -141,40 +159,6 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">I am a:</p>
-            <div className="flex space-x-4">
-              <div className="flex items-center">
-                <input
-                  id="role-participant"
-                  name="role"
-                  type="radio"
-                  value="participant"
-                  checked={formData.role === 'participant'}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                />
-                <label htmlFor="role-participant" className="ml-2 block text-sm text-gray-900">
-                  Participant (Student)
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="role-organizer"
-                  name="role"
-                  type="radio"
-                  value="organizer"
-                  checked={formData.role === 'organizer'}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                />
-                <label htmlFor="role-organizer" className="ml-2 block text-sm text-gray-900">
-                  Organizer (Host)
-                </label>
-              </div>
             </div>
           </div>
 

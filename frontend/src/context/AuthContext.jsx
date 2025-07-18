@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
+import { authAPI } from '../services/apiServices';
 
 const AuthContext = createContext();
 
@@ -11,16 +12,25 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is already logged in on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('devmate_user');
-    if (storedUser) {
-      try {
-        setCurrentUser(JSON.parse(storedUser));
-      } catch (err) {
-        console.error('Error parsing stored user data:', err);
-        localStorage.removeItem('devmate_user');
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('devmate_token');
+      const storedUser = localStorage.getItem('devmate_user');
+      
+      if (token && storedUser) {
+        try {
+          // Verify token is still valid by fetching user profile
+          const user = await authAPI.getProfile();
+          setCurrentUser(user);
+        } catch (err) {
+          console.error('Token validation failed:', err);
+          localStorage.removeItem('devmate_token');
+          localStorage.removeItem('devmate_user');
+        }
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   // Login function
@@ -29,20 +39,15 @@ export const AuthProvider = ({ children }) => {
     setError('');
     
     try {
-      // This would be replaced with an actual API call
-      // For now, we'll simulate a successful login
-      const userData = {
-        id: 'user123',
-        name: 'Test User',
-        email,
-        role: 'participant',
-        skills: ['React', 'Node.js', 'MongoDB'],
-        avatar: 'https://i.pravatar.cc/150?u=user123'
-      };
+      const data = await authAPI.login(email, password);
+      const { user, token } = data;
       
-      setCurrentUser(userData);
-      localStorage.setItem('devmate_user', JSON.stringify(userData));
-      return userData;
+      // Store token and user data
+      localStorage.setItem('devmate_token', token);
+      localStorage.setItem('devmate_user', JSON.stringify(user));
+      setCurrentUser(user);
+      
+      return user;
     } catch (err) {
       setError(err.message || 'Failed to login');
       throw err;
@@ -52,25 +57,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register function
-  const register = async (name, email, password, role) => {
+  const register = async (username, email, password, role = 'user') => {
     setLoading(true);
     setError('');
-    
     try {
-      // This would be replaced with an actual API call
-      // For now, we'll simulate a successful registration
-      const userData = {
-        id: 'user' + Math.floor(Math.random() * 1000),
-        name,
-        email,
-        role,
-        skills: [],
-        avatar: `https://i.pravatar.cc/150?u=${email}`
-      };
-      
-      setCurrentUser(userData);
-      localStorage.setItem('devmate_user', JSON.stringify(userData));
-      return userData;
+      const data = await authAPI.register(username, email, password, role);
+      const { user, token } = data;
+      localStorage.setItem('devmate_token', token);
+      localStorage.setItem('devmate_user', JSON.stringify(user));
+      setCurrentUser(user);
+      return user;
     } catch (err) {
       setError(err.message || 'Failed to register');
       throw err;
@@ -82,6 +78,7 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = () => {
     setCurrentUser(null);
+    localStorage.removeItem('devmate_token');
     localStorage.removeItem('devmate_user');
   };
 
@@ -100,8 +97,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     isAuthenticated: !!currentUser,
-    isParticipant: currentUser?.role === 'participant',
-    isOrganizer: currentUser?.role === 'organizer'
+    isParticipant: currentUser?.role === 'user',
+    isOrganizer: currentUser?.role === 'organizer',
+    role: currentUser?.role,
+    id: currentUser?.id || currentUser?._id
   };
 
   return (
