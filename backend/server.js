@@ -8,14 +8,14 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 
-// App Init
-const app = express();
+// Initialize Express App
+const application = express();
 
-// Logger Setup with Winston
-const logger = winston.createLogger({
+// Logger Configuration using Winston
+const logHandler = winston.createLogger({
     transports: [
         new winston.transports.Console(),
-        new winston.transports.File({ filename: 'logs/server.log' })
+        new winston.transports.File({ filename: 'logs/activity.log' })
     ],
     format: winston.format.combine(
         winston.format.timestamp(),
@@ -23,40 +23,40 @@ const logger = winston.createLogger({
     ),
 });
 
-// Basic Middleware
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
-app.use(compression());
-app.use(morgan('dev'));
+// Global Middlewares
+application.use(cors());
+application.use(helmet());
+application.use(express.json());
+application.use(compression());
+application.use(morgan('dev'));
 
-// Rate Limiter
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
+// API Rate Limiter
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100,
-    message: 'Too many requests from this IP, please try again later.'
+    message: 'Rate limit exceeded. Please try again after some time.'
 });
-app.use('/api', limiter);
+application.use('/api', apiLimiter);
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/projects', require('./routes/projects'));
-app.use('/api/tasks', require('./routes/tasks'));
+// Routes Registration
+application.use('/api/auth', require('./routes/auth'));
+application.use('/api/projects', require('./routes/projects'));
+application.use('/api/tasks', require('./routes/tasks'));
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-    logger.error(err.message, { stack: err.stack });
-    res.status(err.status || 500).json({
+// Global Error Middleware
+application.use((error, req, res, next) => {
+    logHandler.error(error.message, { stack: error.stack });
+    res.status(error.status || 500).json({
         success: false,
-        message: err.message || 'Internal Server Error'
+        message: error.message || 'Something went wrong on the server'
     });
 });
 
-// MongoDB Connection
-const connectDB = async () => {
+// MongoDB Connection Logic
+const initializeDB = async () => {
     try {
         if (!process.env.MONGODB_URI) {
-            throw new Error('MONGODB_URI is not defined in .env');
+            throw new Error('Missing MONGODB_URI in environment variables');
         }
 
         await mongoose.connect(process.env.MONGODB_URI, {
@@ -64,28 +64,28 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
 
-        logger.info('MongoDB connected');
-    } catch (err) {
-        logger.error('MongoDB connection error:', err.message);
+        logHandler.info('Successfully connected to MongoDB');
+    } catch (dbError) {
+        logHandler.error('Failed to connect to MongoDB:', dbError.message);
         process.exit(1);
     }
 };
 
-connectDB();
+initializeDB();
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+// Launch Server
+const APP_PORT = process.env.PORT || 5000;
+const runningServer = application.listen(APP_PORT, () => {
+    logHandler.info(`Server started and listening on port ${APP_PORT}`);
 });
 
-// Graceful Shutdown
+// Handle Graceful Shutdown
 process.on('SIGTERM', () => {
-    logger.info('SIGTERM received. Closing server...');
-    server.close(() => {
-        logger.info('Process terminated');
+    logHandler.info('Received SIGTERM. Initiating shutdown...');
+    runningServer.close(() => {
+        logHandler.info('HTTP server closed.');
         mongoose.connection.close(false, () => {
-            logger.info('MongoDB connection closed');
+            logHandler.info('MongoDB connection closed gracefully.');
             process.exit(0);
         });
     });
