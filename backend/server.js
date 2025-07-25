@@ -51,7 +51,7 @@ const limiter = rateLimit({
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-app.use('/api', limiter);
+application.use('/api', apiLimiter);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -60,20 +60,20 @@ app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/hackathons', require('./routes/hackathons'));
 app.use('/api/hackathon-teams', require('./routes/hackathonTeams'));
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-    logger.error(err.message, { stack: err.stack });
-    res.status(err.status || 500).json({
+// Global Error Middleware
+application.use((error, req, res, next) => {
+    logHandler.error(error.message, { stack: error.stack });
+    res.status(error.status || 500).json({
         success: false,
-        message: err.message || 'Internal Server Error'
+        message: error.message || 'Something went wrong on the server'
     });
 });
 
-// MongoDB Connection
-const connectDB = async () => {
+// MongoDB Connection Logic
+const initializeDB = async () => {
     try {
         if (!process.env.MONGODB_URI) {
-            throw new Error('MONGODB_URI is not defined in .env');
+            throw new Error('Missing MONGODB_URI in environment variables');
         }
 
         await mongoose.connect(process.env.MONGODB_URI, {
@@ -88,21 +88,21 @@ const connectDB = async () => {
     }
 };
 
-connectDB();
+initializeDB();
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+// Launch Server
+const APP_PORT = process.env.PORT || 5000;
+const runningServer = application.listen(APP_PORT, () => {
+    logHandler.info(`Server started and listening on port ${APP_PORT}`);
 });
 
-// Graceful Shutdown
+// Handle Graceful Shutdown
 process.on('SIGTERM', () => {
-    logger.info('SIGTERM received. Closing server...');
-    server.close(() => {
-        logger.info('Process terminated');
+    logHandler.info('Received SIGTERM. Initiating shutdown...');
+    runningServer.close(() => {
+        logHandler.info('HTTP server closed.');
         mongoose.connection.close(false, () => {
-            logger.info('MongoDB connection closed');
+            logHandler.info('MongoDB connection closed gracefully.');
             process.exit(0);
         });
     });
