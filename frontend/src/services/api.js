@@ -30,7 +30,11 @@ api.interceptors.response.use(
       // Token expired or invalid
       localStorage.removeItem('devmate_token');
       localStorage.removeItem('devmate_user');
-      window.location.href = '/login';
+      
+      // Only redirect if not already on login page to avoid infinite loops
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

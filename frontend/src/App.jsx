@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -29,31 +28,12 @@ import PrivateRoute from './components/auth/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading resources
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Navbar />
-          <main className="flex-grow">
+          <main className="flex-grow pt-20">
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Home />} />

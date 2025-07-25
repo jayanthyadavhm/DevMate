@@ -18,13 +18,20 @@ export const AuthProvider = ({ children }) => {
       
       if (token && storedUser) {
         try {
-          // Verify token is still valid by fetching user profile
+          // First set user from localStorage for immediate UI update
+          const parsedUser = JSON.parse(storedUser);
+          setCurrentUser(parsedUser);
+          
+          // Then verify token is still valid by fetching user profile
           const user = await authAPI.getProfile();
           setCurrentUser(user);
+          // Update localStorage with fresh user data
+          localStorage.setItem('devmate_user', JSON.stringify(user));
         } catch (err) {
           console.error('Token validation failed:', err);
           localStorage.removeItem('devmate_token');
           localStorage.removeItem('devmate_user');
+          setCurrentUser(null);
         }
       }
       setLoading(false);
@@ -77,15 +84,21 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('devmate_token');
-    localStorage.removeItem('devmate_user');
+    clearAuthState();
   };
 
   // Update profile function
   const updateProfile = (userData) => {
-    setCurrentUser(prev => ({ ...prev, ...userData }));
-    localStorage.setItem('devmate_user', JSON.stringify({ ...currentUser, ...userData }));
+    const updatedUser = { ...currentUser, ...userData };
+    setCurrentUser(updatedUser);
+    localStorage.setItem('devmate_user', JSON.stringify(updatedUser));
+  };
+
+  // Clear auth state completely
+  const clearAuthState = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('devmate_token');
+    localStorage.removeItem('devmate_user');
   };
 
   const value = {

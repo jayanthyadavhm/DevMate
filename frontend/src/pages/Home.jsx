@@ -105,7 +105,7 @@ const Home = () => {
             <rect width="404" height="404" fill="url(#85737c0e-0916-41d7-917f-596dc7edfa28)" />
           </svg>
         </div>
-        <div className="pt-10 pb-12 sm:pt-16 sm:pb-16 lg:pt-20 lg:pb-20 relative">
+        <div className="pt-16 pb-12 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="lg:grid lg:grid-cols-2 lg:gap-8">
               <div className="pt-12 sm:pt-16 lg:pt-20">
