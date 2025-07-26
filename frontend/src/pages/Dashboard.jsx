@@ -135,9 +135,6 @@ const Dashboard = () => {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900">
-                    Welcome back, {currentUser?.username}!
-                  </h1>
                   <p className="mt-1 text-sm text-gray-500">
                     {isParticipant ? 'Here are your projects and tasks' : 'Manage your projects and team members'}
                   </p>

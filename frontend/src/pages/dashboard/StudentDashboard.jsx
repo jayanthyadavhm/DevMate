@@ -124,19 +124,29 @@ const StudentDashboard = () => {
     }
   };
 
-  const StatCard = ({ icon: Icon, title, value, color = "blue" }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center">
-        <div className={`p-3 rounded-full bg-${color}-100`}>
-          <Icon className={`h-6 w-6 text-${color}-600`} />
-        </div>
-        <div className="ml-4">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+  const StatCard = ({ icon: Icon, title, value, color = "blue" }) => {
+    const colorClasses = {
+      blue: "bg-blue-100 text-blue-600",
+      green: "bg-green-100 text-green-600", 
+      purple: "bg-purple-100 text-purple-600",
+      yellow: "bg-yellow-100 text-yellow-600",
+      red: "bg-red-100 text-red-600"
+    };
+
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center">
+          <div className={`p-3 rounded-full ${colorClasses[color] || colorClasses.blue}`}>
+            <Icon className="h-6 w-6" />
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className="text-2xl font-bold text-gray-900">{value}</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const HackathonCard = ({ hackathon, isJoined = false }) => (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
@@ -255,7 +265,6 @@ const StudentDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome back, {currentUser?.username}!</h1>
               <p className="text-gray-600 mt-1">Discover hackathons and build amazing projects</p>
             </div>
             <Link
