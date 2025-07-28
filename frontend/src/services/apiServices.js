@@ -80,7 +80,10 @@ export const hackathonTeamsAPI = {
   // Get user profile
   getUserProfile: async (userId) => {
     try {
-      const response = await api.get(`/hackathon-teams/profile/${userId || ''}`);
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      const response = await api.get(`/hackathon-teams/profile/${userId}`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch profile');

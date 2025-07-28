@@ -14,8 +14,8 @@ const NavLink = ({ to, children }) => {
       className={`
         px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150
         ${isActive 
-          ? 'text-primary-600 bg-primary-50'
-          : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
+          ? 'text-blue-600 bg-blue-50'
+          : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
         }
       `}
     >
@@ -71,7 +71,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center space-x-2">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
                 DevMate
               </span>
             </Link>
@@ -142,12 +142,14 @@ const Navbar = () => {
                           Dashboard
                         </Link>
                       )}
-                      <Link
-                        to={`/profile/${id}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        Your Profile
-                      </Link>
+                      {id && (
+                        <Link
+                          to={`/profile/${id}`}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          Your Profile
+                        </Link>
+                      )}
                       <Link
                         to="/profile/edit"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -189,7 +191,7 @@ const Navbar = () => {
           <div className="flex md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-100 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none"
             >
               {isMenuOpen ? (
                 <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -260,12 +262,14 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                 )}
-                <Link
-                  to={`/profile/${id}`}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
-                >
-                  Your Profile
-                </Link>
+                {id && (
+                  <Link
+                    to={`/profile/${id}`}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    Your Profile
+                  </Link>
+                )}
                 <Link
                   to="/profile/edit"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"

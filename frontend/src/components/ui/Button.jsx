@@ -2,9 +2,9 @@ import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const baseStyles = {
-  primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-  secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500',
-  outline: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-primary-500',
+  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+  secondary: 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500',
+  outline: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-blue-500',
   danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
 };
 

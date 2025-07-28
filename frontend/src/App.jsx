@@ -16,10 +16,16 @@ import TeamDetails from './pages/teams/TeamDetails';
 import UserProfile from './pages/profile/UserProfile';
 import EditProfile from './pages/profile/EditProfile';
 import OrganiserDashboard from './pages/organiser/OrganiserDashboard';
+import CreateHackathonOrganiser from './pages/organiser/CreateHackathon';
+import ManageHackathons from './pages/organiser/ManageHackathons';
+import ParticipantManagement from './pages/organiser/ParticipantManagement';
+import OrganiserAnalytics from './pages/organiser/OrganiserAnalytics';
+import OrganiserSettings from './pages/organiser/OrganiserSettings';
 import StudentDashboard from './pages/dashboard/StudentDashboard';
 import Projects from './pages/Projects';
 import CreateProject from './pages/projects/CreateProject';
 import NotFound from './pages/NotFound';
+import ProfileRedirect from './components/ProfileRedirect';
 
 // Auth Components
 import PrivateRoute from './components/auth/PrivateRoute';
@@ -58,12 +64,38 @@ function App() {
               } />
               
               {/* Protected routes */}
-              {/* Organiser dashboard route */}
+              {/* Organiser routes */}
               <Route path="/organiser" element={
                 <PrivateRoute requiredRole="organizer">
                   <OrganiserDashboard />
                 </PrivateRoute>
               } />
+              <Route path="/organiser/create-hackathon" element={
+                <PrivateRoute requiredRole="organizer">
+                  <CreateHackathonOrganiser />
+                </PrivateRoute>
+              } />
+              <Route path="/organiser/manage-hackathons" element={
+                <PrivateRoute requiredRole="organizer">
+                  <ManageHackathons />
+                </PrivateRoute>
+              } />
+              <Route path="/organiser/hackathon/:hackathonId/participants" element={
+                <PrivateRoute requiredRole="organizer">
+                  <ParticipantManagement />
+                </PrivateRoute>
+              } />
+              <Route path="/organiser/analytics" element={
+                <PrivateRoute requiredRole="organizer">
+                  <OrganiserAnalytics />
+                </PrivateRoute>
+              } />
+              <Route path="/organiser/settings" element={
+                <PrivateRoute requiredRole="organizer">
+                  <OrganiserSettings />
+                </PrivateRoute>
+              } />
+              
               {/* Student dashboard route */}
               <Route path="/dashboard" element={
                 <PrivateRoute requiredRole="user">
@@ -96,6 +128,7 @@ function App() {
                 </PrivateRoute>
               } />
               <Route path="/profile/:id" element={<UserProfile />} />
+              <Route path="/profile" element={<ProfileRedirect />} />
               
               {/* 404 route */}
               <Route path="*" element={<NotFound />} />

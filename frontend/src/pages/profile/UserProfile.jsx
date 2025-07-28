@@ -33,16 +33,27 @@ import {
 const UserProfile = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
+  
+  // Use the ID from params, or fallback to current user's ID
+  const profileId = id || currentUser?.id || currentUser?._id;
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      // Don't make API call if we don't have a valid ID
+      if (!profileId) {
+        setError('No user ID provided');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError('');
-        const userData = await hackathonTeamsAPI.getUserProfile(id);
+        const userData = await hackathonTeamsAPI.getUserProfile(profileId);
         setUser(userData);
       } catch (err) {
         console.error('Error fetching user profile:', err);
@@ -52,10 +63,8 @@ const UserProfile = () => {
       }
     };
 
-    if (id) {
-      fetchUserProfile();
-    }
-  }, [id]);
+    fetchUserProfile();
+  }, [profileId]);
 
   if (loading) {
     return (
@@ -199,7 +208,7 @@ const UserProfile = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <StarIcon className="h-5 w-5 text-purple-500 mr-2" />
+                    <StarIcon className="h-5 w-5 text-blue-500 mr-2" />
                     <span className="text-sm text-gray-600">Rating</span>
                   </div>
                   <div className="flex items-center">
@@ -517,8 +526,8 @@ const UserProfile = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Hackathon Preferences</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-                  <TrophyIcon className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                  <TrophyIcon className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                   <h3 className="font-medium text-gray-900">Experience Level</h3>
                   <p className="text-sm text-gray-600 mt-1">{user.hackathonExperience || 'Not specified'}</p>
                 </div>

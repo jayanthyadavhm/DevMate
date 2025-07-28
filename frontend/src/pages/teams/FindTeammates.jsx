@@ -405,12 +405,16 @@ const FindTeammates = () => {
                   </div>
 
                   <div className="mt-6 flex justify-between">
-                    <Link
-                      to={`/profile/${user.id}`}
-                      className="text-primary-600 hover:text-primary-500 font-medium text-sm"
-                    >
-                      View Profile
-                    </Link>
+                    {user.id ? (
+                      <Link
+                        to={`/profile/${user.id}`}
+                        className="text-primary-600 hover:text-primary-500 font-medium text-sm"
+                      >
+                        View Profile
+                      </Link>
+                    ) : (
+                      <span className="text-gray-400 text-sm">Profile unavailable</span>
+                    )}
                     <button
                       onClick={() => handleSendRequest(user.id)}
                       disabled={sendingRequest[user.id]}

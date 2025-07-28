@@ -130,9 +130,13 @@ const TeamDetails = () => {
                       />
                       <div className="ml-4">
                         <h3 className="text-lg font-medium text-gray-900">
-                          <Link to={`/profile/${member.id}`} className="hover:text-primary-600">
-                            {member.name}
-                          </Link>
+                          {member.id ? (
+                            <Link to={`/profile/${member.id}`} className="hover:text-primary-600">
+                              {member.name}
+                            </Link>
+                          ) : (
+                            <span>{member.name}</span>
+                          )}
                         </h3>
                         <div className="mt-1 flex items-center">
                           <span className="text-sm text-gray-500">{member.role}</span>
